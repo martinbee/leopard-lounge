@@ -6,7 +6,9 @@ import {
   StylesProvider,
 } from '@material-ui/core/styles';
 import purple from '@material-ui/core/colors/purple';
+import { BrowserRouter } from 'react-router-dom';
 
+import { AuthContextProvider } from './contexts/auth';
 import AppHeader from './components/AppHeader';
 import RootRouter from './components/RootRouter';
 
@@ -21,9 +23,13 @@ function App() {
     <StylesProvider injectFirst>
       <ThemeProvider theme={theme}>
         <CssBaseline>
-          <AppHeader>
-            <RootRouter />
-          </AppHeader>
+          <BrowserRouter>
+            <AuthContextProvider>
+              <AppHeader>
+                <RootRouter />
+              </AppHeader>
+            </AuthContextProvider>
+          </BrowserRouter>
         </CssBaseline>
       </ThemeProvider>
     </StylesProvider>
