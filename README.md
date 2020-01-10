@@ -17,7 +17,7 @@ This app is a multiplayer game room lounge built with React, Lambda, DynamoDB, C
 - Tests
 
 ### Lounge Portion
-- Add material ui
+- ~Add material ui~
 - Add react router
 - Add layout component
 - Add home screen as lounge
