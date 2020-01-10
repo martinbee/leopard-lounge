@@ -4,7 +4,7 @@ import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import purple from '@material-ui/core/colors/purple';
 
 import AppHeader from './components/AppHeader';
-import Router from './components/Router';
+import RootRouter from './components/RootRouter';
 
 const theme = createMuiTheme({
   palette: {
@@ -17,7 +17,7 @@ function App() {
     <ThemeProvider theme={theme}>
       <CssBaseline>
         <AppHeader>
-          <Router />
+          <RootRouter />
         </AppHeader>
       </CssBaseline>
     </ThemeProvider>
