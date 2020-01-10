@@ -7,6 +7,6 @@ const AppHeader = ({ children }) => {
       {children}
     </div>
   );
-}
+};
 
 export default AppHeader;
