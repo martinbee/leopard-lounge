@@ -20,6 +20,18 @@ const Text = styled(Typography)`
   text-align: center;
 `;
 
+const GamesWrapper = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+`;
+
+const GameButton = styled(Button)`
+  width: 8rem;
+  padding: 1rem;
+  margin: 1rem;
+`;
+
 
 // on load show content
 // if user clicks on create or host then trigger login screen
@@ -45,25 +57,26 @@ const Lobby = () => {
         <img src={logo} alt="leopard logo" />
         <Text variant="body1"># of Players Playing: 0</Text>
       </Section>
+      <hr/>
       <Section>
         <Text variant="h6">Choose a game:</Text>
-        <div>
+        <GamesWrapper>
           {games.map((game) => {
             const chooseGame = () => selectGame(game);
             const chosen = selectedGame === game;
 
             return (
-              <Button 
-                key={game} 
+              <GameButton
+                key={game}
                 onClick={chooseGame}
                 variant="contained"
                 color={chosen ? 'primary' : 'default'}
               >
                 {game}
-              </Button>
+              </GameButton>
             );
           })}
-        </div>
+        </GamesWrapper>
       </Section>
     </Container>
   );
