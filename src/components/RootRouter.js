@@ -6,6 +6,8 @@ import {
 
 import Lobby from './Lobby';
 import Login from './Login';
+import ProtectedRoute from './ProtectedRoute';
+import Room from './Room';
 
 const RootRouter = () => (
   <Switch>
@@ -15,6 +17,9 @@ const RootRouter = () => (
     <Route path="/login">
       <Login />
     </Route>
+    <ProtectedRoute path="/room">
+      <Room />
+    </ProtectedRoute>
   </Switch>
 );
 

@@ -25,7 +25,11 @@ const HeaderLogo = styled.img`
   height: 50px;
 `;
 
-const AppHeader = ({ children }) => (
+const BodyWrapper = styled.div`
+  margin-top: 2rem;
+`;
+
+const AppLayout = ({ children }) => (
   <>
     <AppBar position="static">
       <HeaderWrapper>
@@ -38,8 +42,10 @@ const AppHeader = ({ children }) => (
         <AppHeaderAuthButton />
       </HeaderWrapper>
     </AppBar>
-    {children}
+    <BodyWrapper>
+      {children}
+    </BodyWrapper>
   </>
 );
 
-export default AppHeader;
+export default AppLayout;

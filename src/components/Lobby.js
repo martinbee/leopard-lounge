@@ -6,6 +6,7 @@ import {
 } from '@material-ui/core';
 import styled from 'styled-components';
 
+import { CleanLink } from './styles';
 import logo from '../images/leopard-152.png';
 
 const Section = styled.div`
@@ -47,6 +48,12 @@ const games = [
   'Tic-Tac-Toe',
 ]; // come from api eventually
 
+// should flow like so: two tabs, join/create
+// join should just ask for room code
+// create shoul have selects for games
+// select for local or online
+// create button at bottom that's disabled until game is chosen
+
 const Lobby = () => {
   const [selectedGame, selectGame] = useState('');
 
@@ -57,7 +64,6 @@ const Lobby = () => {
         <img src={logo} alt="leopard logo" />
         <Text variant="body1"># of Players Playing: 0</Text>
       </Section>
-      <hr/>
       <Section>
         <Text variant="h6">Choose a game:</Text>
         <GamesWrapper>
@@ -78,6 +84,36 @@ const Lobby = () => {
           })}
         </GamesWrapper>
       </Section>
+      {selectedGame && (
+        <Section>
+          <Text variant="h6">Next Steps:</Text>
+          <div>
+            <GameButton
+              onClick={() => {}}
+              variant="contained"
+              color="default"
+            >
+              Join
+            </GameButton>
+            <CleanLink
+              to={{
+                pathname: '/room',
+                state: {
+                  game: selectedGame,
+                },
+              }}
+            >
+              <GameButton
+                onClick={() => {}}
+                variant="contained"
+                color="default"
+              >
+                Create
+              </GameButton>
+            </CleanLink>
+          </div>
+        </Section>
+      )}
     </Container>
   );
 };

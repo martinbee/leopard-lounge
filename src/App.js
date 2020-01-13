@@ -9,7 +9,7 @@ import purple from '@material-ui/core/colors/purple';
 import { BrowserRouter } from 'react-router-dom';
 
 import { AuthContextProvider } from './contexts/auth';
-import AppHeader from './components/AppHeader';
+import AppLayout from './components/AppLayout';
 import RootRouter from './components/RootRouter';
 
 const theme = createMuiTheme({
@@ -25,9 +25,9 @@ function App() {
         <CssBaseline>
           <BrowserRouter>
             <AuthContextProvider>
-              <AppHeader>
+              <AppLayout>
                 <RootRouter />
-              </AppHeader>
+              </AppLayout>
             </AuthContextProvider>
           </BrowserRouter>
         </CssBaseline>
