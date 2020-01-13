@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import {
   Typography,
+  Button,
 } from '@material-ui/core';
 import styled from 'styled-components';
+import Cross from '@material-ui/icons/Close';
+import Circle from '@material-ui/icons/RadioButtonUnchecked';
 
 
 const Text = styled(Typography)`
@@ -13,16 +16,31 @@ const BoxWrapper = styled.div`
   height: 42vh;
   display: flex;
   flex-wrap: wrap;
+  margin-top: 2rem;
+  margin-bottom: 3rem;
 `;
-const Box = styled.div`
-  border-right: ${({ border }) => border === 'horizontals' && '1px solid black'};
-  border-left: ${({ border }) => border === 'horizontals' && '1px solid black'};
-  border-top: ${({ border }) => border === 'verticals' && '1px solid black'};
-  border-bottom: ${({ border }) => border === 'verticals' && '1px solid black'};
+
+const Box = styled.button`
+  border-right: ${({ border }) => border === 'horizontals' ? '1px solid black' : 'none'};
+  border-left: ${({ border }) => border === 'horizontals' ? '1px solid black' : 'none'};
+  border-top: ${({ border }) => border === 'verticals' ? '1px solid black' : 'none'};
+  border-bottom: ${({ border }) => border === 'verticals' ? '1px solid black' : 'none'};
   border: ${({ border }) => border === 'all' && '1px solid black'};
+  background: none;
   text-align: center;
   height: 14vh;
-  width: 33%;
+  width: 33.3%;
+  cursor: pointer;
+`;
+
+const iconStyles = {
+  width: '100%',
+  height: '100%',
+};
+
+const ButtonWrapper = styled.div`
+  display: flex;
+  justify-content: center;
 `;
 
 // 9 squares with appropriate borders
@@ -30,7 +48,7 @@ const Box = styled.div`
 // once a square has been clicked it belongs to that player
 // that square can't be clicked again
 // when three in a row (horiz, diag, vertical) the player who owns those three wins (need to figure out algo)
-const initialClaimMap = {
+const initialBoardState = {
   0: {
     player: '',
     border: '',
@@ -71,7 +89,7 @@ const initialClaimMap = {
 
 const TicTacToe = () => {
   const [currentPlayer, setCurrentPlayer] = useState('1');
-  const [claimMap, setClaimMap] = useState(initialClaimMap);
+  const [boardState, setBoardState] = useState(initialBoardState);
 
   const toggleCurrentPlayer = () => {
     if (currentPlayer === '1') {
@@ -81,27 +99,40 @@ const TicTacToe = () => {
     }
   };
 
+  const resetBoard = () => setBoardState(initialBoardState);
+  const boxes = Object.entries(boardState);
+  const resetDisabled = !boxes.find(([_, properties]) => Boolean(properties.player));
+
   return (
     <>
       <div>
         <Text>Turn: Player {currentPlayer}</Text>
       </div>
       <BoxWrapper>
-        {Object.entries(claimMap).map(([key, properties]) => {
+        {boxes.map(([key, properties]) => {
           const { player, border } = properties;
 
           const claimBox = () => {
             if (!player) {
-              const updatedClaimMap = {
-                ...claimMap,
+              const updatedBoardState = {
+                ...boardState,
                 [key]: {
                   player: currentPlayer,
                   border,
                 },
               };
-              setClaimMap(updatedClaimMap);
+              setBoardState(updatedBoardState);
               toggleCurrentPlayer();
             }
+          };
+
+          const renderIcon = () => {
+            if (!player) return null;
+
+
+            if (player === '1') return <Cross style={iconStyles} />;
+
+            return <Circle style={iconStyles} />;
           };
 
           return (
@@ -110,11 +141,21 @@ const TicTacToe = () => {
               border={border}
               onClick={claimBox}
             >
-              {player}
+              {renderIcon()}
             </Box>
           );
         })}
       </BoxWrapper>
+      <ButtonWrapper>
+        <Button
+          onClick={resetBoard}
+          color="secondary"
+          variant="contained"
+          disabled={resetDisabled}
+        >
+          Reset
+        </Button>
+      </ButtonWrapper>
     </>
   );
 };
