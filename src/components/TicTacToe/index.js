@@ -1,7 +1,11 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import {
   Typography,
   Button,
+  FormControl,
+  Select,
+  InputLabel,
+  MenuItem,
 } from '@material-ui/core';
 import styled from 'styled-components';
 
@@ -33,6 +37,16 @@ const ButtonWrapper = styled.div`
   justify-content: center;
 `;
 
+const SelectWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+`;
+
+const SelectFormControl = styled(FormControl)`
+  width: 8rem;
+`;
+
 // when three in a row (horiz, diag, vertical) the player who owns those three wins (need to figure out algo)
 // could split into three rows and then on every move check if there are 3 boxes with a players value, if so, then
 // check the first row, then second row, then third row, then all three rows[0], [1], [2], then row one[0], two[1], three[2]
@@ -53,27 +67,24 @@ const ButtonWrapper = styled.div`
 // horizontal: if %3 then check right; if [1,4,7] check left and right; else check left
 // diagonal: check [4] if present, then check [0, 2, 6, 8];
 
+const numberOfRowsOptions = [3, 4, 5, 6];
+
 const initialPlayerState = '1';
 // border on a grid:
 // row level: if index === n (no bottom border), if index === 0 (no top border)
 // box level: if index === n (no left border), if index === 0 (no right border)
-const initialRowState = [
-  '',
-  '',
-  '',
-];
 
 // add ability to generate board of n size
 // need to generate initial state based on n
 // will be an array of arrays
 // [["" * n] * n]
 
-const getInitialBoardState = (numberOfRows = 1) => new Array(numberOfRows)
+const getBlankBoard = (numberOfRows = 1) => new Array(numberOfRows)
   .fill(new Array(numberOfRows).fill(''));
 
 const TicTacToe = () => {
-  const [numberOfRows, setNumberOfRows] = useState(5);
-  const initialBoardState = getInitialBoardState(numberOfRows);
+  const [numberOfRows, setNumberOfRows] = useState(6);
+  const initialBoardState = getBlankBoard(numberOfRows);
   const [boardState, setBoardState] = useState(initialBoardState);
   const [currentPlayer, setCurrentPlayer] = useState(initialPlayerState);
 
@@ -88,10 +99,15 @@ const TicTacToe = () => {
   const claimBox = (rowIndex, boxIndex) => console.log(rowIndex, boxIndex);
 
   const resetBoard = () => {
-    setBoardState(initialRowState);
+    setBoardState(getBlankBoard(numberOfRows));
     setCurrentPlayer(initialPlayerState);
   };
   const resetDisabled = false;
+  const selectNumberOfRows = (evt) => {
+    const number = evt.target.value;
+    setNumberOfRows(number);
+    setBoardState(getBlankBoard(number));
+  };
 
   return (
     <>
@@ -141,6 +157,25 @@ const TicTacToe = () => {
           Reset
         </Button>
       </ButtonWrapper>
+      <SelectWrapper>
+        <SelectFormControl>
+          <InputLabel id="number-of-rows-select-label">
+            Number of Rows
+          </InputLabel>
+          <Select
+            labelId="number-of-rows-select-label"
+            id="number-of-rows-select"
+            value={numberOfRows}
+            onChange={selectNumberOfRows}
+          >
+            {numberOfRowsOptions.map((number) => (
+              <MenuItem key={number} value={number}>
+                {number}
+              </MenuItem>
+            ))}
+          </Select>
+        </SelectFormControl>
+      </SelectWrapper>
     </>
   );
 };

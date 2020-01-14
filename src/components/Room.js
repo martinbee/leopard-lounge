@@ -8,7 +8,7 @@ import styled from 'styled-components';
 import TicTacToe from './TicTacToe';
 
 const GameInfoWrapper = styled.div`
-  margin-bottom: 4rem;
+  margin-bottom: 3rem;
 `;
 const GameInfo = styled.div`
   display: flex;
