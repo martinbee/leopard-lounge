@@ -43,53 +43,42 @@ const ButtonWrapper = styled.div`
   justify-content: center;
 `;
 
-// 9 squares with appropriate borders
-// need state to know who's turn it is
-// once a square has been clicked it belongs to that player
-// that square can't be clicked again
 // when three in a row (horiz, diag, vertical) the player who owns those three wins (need to figure out algo)
-const initialBoardState = {
-  0: {
-    player: '',
-    border: '',
-  },
-  1: {
-    player: '',
-    border: 'horizontals',
-  },
-  2: {
-    player: '',
-    border: '',
-  },
-  3: {
-    player: '',
-    border: 'verticals',
-  },
-  4: {
-    player: '',
-    border: 'all',
-  },
-  5: {
-    player: '',
-    border: 'verticals',
-  },
-  6: {
-    player: '',
-    border: '',
-  },
-  7: {
-    player: '',
-    border: 'horizontals',
-  },
-  8: {
-    player: '',
-    border: '',
-  },
-};
+// could split into three rows and then on every move check if there are 3 boxes with a players value, if so, then
+// check the first row, then second row, then third row, then all three rows[0], [1], [2], then row one[0], two[1], three[2]
+// and row three[0], two[1], three[2]
 
+// alt row solution
+// col=row=diag=rdiag=0
+// winner=false
+// for i=1 to n
+//   if cell[x,i]=player then col++
+//   if cell[i,y]=player then row++
+//   if cell[i,i]=player then diag++
+//   if cell[i,n-i+1]=player then rdiag++
+// if row=n or col=n or diag=n or rdiag=n then winner=true
+
+// grid (is this better??)
+// vertical: check minus 3 recursively, then plus 3 recursively
+// horizontal: if %3 then check right; if [1,4,7] check left and right; else check left
+// diagonal: check [4] if present, then check [0, 2, 6, 8];
+
+const initialPlayerState = '1';
+// border on a grid:
+// row level: if index === n (no bottom border), if index === 0 (no top border)
+// box level: if index === n (no left border), if index === 0 (no right border)
+const initialRowState = [
+  '',
+  '',
+  '',
+];
+
+// add ability to generate board of n size
+// need to generate initial state based on n
+// will be an array of arrays
+// [["" * n] * n]
 const TicTacToe = () => {
-  const [currentPlayer, setCurrentPlayer] = useState('1');
-  const [boardState, setBoardState] = useState(initialBoardState);
+  const [currentPlayer, setCurrentPlayer] = useState(initialPlayerState);
 
   const toggleCurrentPlayer = () => {
     if (currentPlayer === '1') {
@@ -99,7 +88,12 @@ const TicTacToe = () => {
     }
   };
 
-  const resetBoard = () => setBoardState(initialBoardState);
+  const resetBoard = () => {
+    setTopRow(initialRowState);
+    setMiddleRow(initialRowState);
+    setTopRow(initialRowState);
+    setCurrentPlayer(initialPlayerState);
+  };
   const boxes = Object.entries(boardState);
   const resetDisabled = !boxes.find(([_, properties]) => Boolean(properties.player));
 
