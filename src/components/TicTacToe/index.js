@@ -1,42 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   Typography,
   Button,
 } from '@material-ui/core';
 import styled from 'styled-components';
-import Cross from '@material-ui/icons/Close';
-import Circle from '@material-ui/icons/RadioButtonUnchecked';
 
+import Box from './Box';
+
+const gameHeight = '42';
 
 const Text = styled(Typography)`
   text-align: center;
 `;
 
 const BoxWrapper = styled.div`
-  height: 42vh;
+  height: ${gameHeight}vh;
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   margin-top: 2rem;
   margin-bottom: 3rem;
 `;
 
-const Box = styled.button`
-  border-right: ${({ border }) => border === 'horizontals' ? '1px solid black' : 'none'};
-  border-left: ${({ border }) => border === 'horizontals' ? '1px solid black' : 'none'};
-  border-top: ${({ border }) => border === 'verticals' ? '1px solid black' : 'none'};
-  border-bottom: ${({ border }) => border === 'verticals' ? '1px solid black' : 'none'};
-  border: ${({ border }) => border === 'all' && '1px solid black'};
-  background: none;
-  text-align: center;
-  height: 14vh;
-  width: 33.3%;
-  cursor: pointer;
+const Row = styled.div`
+  height: ${({ rowHeight }) => rowHeight};
+  border-top: ${({ isFirstRow }) => isFirstRow ? 'none' : '.5px solid black'};
+  border-bottom: ${({ isLastRow }) => isLastRow ? 'none' : '.5px solid black'};
+  display: flex;
 `;
-
-const iconStyles = {
-  width: '100%',
-  height: '100%',
-};
 
 const ButtonWrapper = styled.div`
   display: flex;
@@ -77,7 +67,14 @@ const initialRowState = [
 // need to generate initial state based on n
 // will be an array of arrays
 // [["" * n] * n]
+
+const getInitialBoardState = (numberOfRows = 1) => new Array(numberOfRows)
+  .fill(new Array(numberOfRows).fill(''));
+
 const TicTacToe = () => {
+  const [numberOfRows, setNumberOfRows] = useState(5);
+  const initialBoardState = getInitialBoardState(numberOfRows);
+  const [boardState, setBoardState] = useState(initialBoardState);
   const [currentPlayer, setCurrentPlayer] = useState(initialPlayerState);
 
   const toggleCurrentPlayer = () => {
@@ -88,14 +85,13 @@ const TicTacToe = () => {
     }
   };
 
+  const claimBox = (rowIndex, boxIndex) => console.log(rowIndex, boxIndex);
+
   const resetBoard = () => {
-    setTopRow(initialRowState);
-    setMiddleRow(initialRowState);
-    setTopRow(initialRowState);
+    setBoardState(initialRowState);
     setCurrentPlayer(initialPlayerState);
   };
-  const boxes = Object.entries(boardState);
-  const resetDisabled = !boxes.find(([_, properties]) => Boolean(properties.player));
+  const resetDisabled = false;
 
   return (
     <>
@@ -103,40 +99,35 @@ const TicTacToe = () => {
         <Text>Turn: Player {currentPlayer}</Text>
       </div>
       <BoxWrapper>
-        {boxes.map(([key, properties]) => {
-          const { player, border } = properties;
-
-          const claimBox = () => {
-            if (!player) {
-              const updatedBoardState = {
-                ...boardState,
-                [key]: {
-                  player: currentPlayer,
-                  border,
-                },
-              };
-              setBoardState(updatedBoardState);
-              toggleCurrentPlayer();
-            }
-          };
-
-          const renderIcon = () => {
-            if (!player) return null;
-
-
-            if (player === '1') return <Cross style={iconStyles} />;
-
-            return <Circle style={iconStyles} />;
-          };
+        {boardState.map((row, rowIndex) => {
+          const rowHeight = `${gameHeight / numberOfRows}vh`;
+          const isFirstRow = rowIndex === 0;
+          const isLastRow = rowIndex === numberOfRows - 1;
 
           return (
-            <Box
-              key={key}
-              border={border}
-              onClick={claimBox}
+            <Row
+              key={rowIndex}
+              rowHeight={rowHeight}
+              isFirstRow={isFirstRow}
+              isLastRow={isLastRow}
             >
-              {renderIcon()}
-            </Box>
+              {row.map((player, boxIndex) => {
+                const key = `${rowIndex}, ${boxIndex}`;
+                const claim = () => claimBox(rowIndex, boxIndex);
+                const isFirstBox = boxIndex === 0;
+                const isLastBox = boxIndex === numberOfRows - 1;
+
+                return (
+                  <Box
+                    key={key}
+                    claimBox={claim}
+                    player={player}
+                    isFirstBox={isFirstBox}
+                    isLastBox={isLastBox}
+                  />
+                );
+              })}
+            </Row>
           );
         })}
       </BoxWrapper>
