@@ -10,6 +10,7 @@ import {
 import styled from 'styled-components';
 
 import Box from './Box';
+import HasWonModal from './HasWonModal';
 
 const gameHeight = '42';
 
@@ -42,11 +43,6 @@ const SelectFormControl = styled(FormControl)`
   width: 8rem;
 `;
 
-// when three in a row (horiz, diag, vertical) the player who owns those three wins (need to figure out algo)
-// could split into three rows and then on every move check if there are 3 boxes with a players value, if so, then
-// check the first row, then second row, then third row, then all three rows[0], [1], [2], then row one[0], two[1], three[2]
-// and row three[0], two[1], three[2]
-
 // alt row solution
 // col=row=diag=rdiag=0
 // winner=false
@@ -57,31 +53,45 @@ const SelectFormControl = styled(FormControl)`
 //   if cell[i,n-i+1]=player then rdiag++
 // if row=n or col=n or diag=n or rdiag=n then winner=true
 
-// grid (is this better??)
-// vertical: check minus 3 recursively, then plus 3 recursively
-// horizontal: if %3 then check right; if [1,4,7] check left and right; else check left
-// diagonal: check [4] if present, then check [0, 2, 6, 8];
+const checkBoardForVictory = (rowIndex, boxIndex, boardState, player) => {
+  const numberOfRows = boardState.length;
+  let rowCount = 0;
+  let colCount = 0;
+  let diagCount = 0;
+  let reverseDiagCount = 0;
+
+  for (let i = 0; i < numberOfRows; i += 1) {
+    const rowValue = boardState[rowIndex][i];
+    const colValue = boardState[i][boxIndex];
+    const diagValue = boardState[i][i];
+    const reverseDiagValue = boardState[i][numberOfRows - (i + 1)];
+
+    if (rowValue === player) rowCount += 1;
+    if (colValue === player) colCount += 1;
+    if (diagValue === player) diagCount += 1;
+    if (reverseDiagValue === player) reverseDiagCount += 1;
+  }
+
+  if (rowCount === numberOfRows) return true;
+  if (colCount === numberOfRows) return true;
+  if (diagCount === numberOfRows) return true;
+  if (reverseDiagCount === numberOfRows) return true;
+
+  return false;
+};
 
 const numberOfRowsOptions = [3, 4, 5, 6];
-
 const initialPlayerState = '1';
-// border on a grid:
-// row level: if index === n (no bottom border), if index === 0 (no top border)
-// box level: if index === n (no left border), if index === 0 (no right border)
-
-// add ability to generate board of n size
-// need to generate initial state based on n
-// will be an array of arrays
-// [["" * n] * n]
 
 const getBlankBoard = (numberOfRows = 1) => new Array(numberOfRows)
   .fill(new Array(numberOfRows).fill(''));
-
+// handle cats game
 const TicTacToe = () => {
   const [numberOfRows, setNumberOfRows] = useState(3);
   const initialBoardState = getBlankBoard(numberOfRows);
   const [boardState, setBoardState] = useState(initialBoardState);
   const [currentPlayer, setCurrentPlayer] = useState(initialPlayerState);
+  const [showVictoryScreen, setShowVictoryScreen] = useState(false);
 
   const toggleCurrentPlayer = () => {
     if (currentPlayer === '1') {
@@ -105,10 +115,23 @@ const TicTacToe = () => {
     });
 
     setBoardState(updatedBoard);
-    toggleCurrentPlayer();
+
+    const hasPlayerWon = checkBoardForVictory(
+      rowIndexToClaim,
+      boxIndexToClaim,
+      updatedBoard,
+      currentPlayer,
+    );
+
+    if (hasPlayerWon) {
+      setShowVictoryScreen(true);
+    } else {
+      toggleCurrentPlayer();
+    }
   };
 
   const resetBoard = () => {
+    setShowVictoryScreen(false);
     setBoardState(getBlankBoard(numberOfRows));
     setCurrentPlayer(initialPlayerState);
   };
@@ -195,6 +218,11 @@ const TicTacToe = () => {
           );
         })}
       </BoxWrapper>
+      <HasWonModal
+        onClose={resetBoard}
+        open={Boolean(showVictoryScreen)}
+        victor={currentPlayer}
+      />
     </>
   );
 };
