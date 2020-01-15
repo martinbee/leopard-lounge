@@ -10,7 +10,7 @@ import {
 import styled from 'styled-components';
 
 import Box from './Box';
-import HasWonModal from './HasWonModal';
+import ResultsModal from './ResultsModal';
 
 const gameHeight = '42';
 
@@ -42,16 +42,6 @@ const Row = styled.div`
 const SelectFormControl = styled(FormControl)`
   width: 8rem;
 `;
-
-// alt row solution
-// col=row=diag=rdiag=0
-// winner=false
-// for i=1 to n
-//   if cell[x,i]=player then col++
-//   if cell[i,y]=player then row++
-//   if cell[i,i]=player then diag++
-//   if cell[i,n-i+1]=player then rdiag++
-// if row=n or col=n or diag=n or rdiag=n then winner=true
 
 const checkBoardForVictory = (rowIndex, boxIndex, boardState, player) => {
   const numberOfRows = boardState.length;
@@ -85,13 +75,14 @@ const initialPlayerState = '1';
 
 const getBlankBoard = (numberOfRows = 1) => new Array(numberOfRows)
   .fill(new Array(numberOfRows).fill(''));
-// handle cats game
+
 const TicTacToe = () => {
   const [numberOfRows, setNumberOfRows] = useState(3);
   const initialBoardState = getBlankBoard(numberOfRows);
   const [boardState, setBoardState] = useState(initialBoardState);
   const [currentPlayer, setCurrentPlayer] = useState(initialPlayerState);
-  const [showVictoryScreen, setShowVictoryScreen] = useState(false);
+  const [victor, setVictor] = useState('');
+  const [showResultsScreen, setShowResultsScreen] = useState(false);
 
   const toggleCurrentPlayer = () => {
     if (currentPlayer === '1') {
@@ -124,16 +115,30 @@ const TicTacToe = () => {
     );
 
     if (hasPlayerWon) {
-      setShowVictoryScreen(true);
+      setVictor(currentPlayer); // this does not disappear
+      setShowResultsScreen(true);
     } else {
-      toggleCurrentPlayer();
+      // feels clunky, maybe count moves?? logic doesn't work
+      const isCatsGame = updatedBoard.reduce((acc, row) => {
+        if (Boolean(acc)) return acc;
+        const emptyValues = row.filter(value => !Boolean(value));
+
+        return !emptyValues.length;
+      }, false);
+
+      if (isCatsGame) {
+        setShowResultsScreen(true);
+      } else {
+        toggleCurrentPlayer();
+      }
     }
   };
 
   const resetBoard = () => {
-    setShowVictoryScreen(false);
+    setShowResultsScreen(false);
     setBoardState(getBlankBoard(numberOfRows));
     setCurrentPlayer(initialPlayerState);
+    setVictor('');
   };
 
   // do better here
@@ -218,10 +223,10 @@ const TicTacToe = () => {
           );
         })}
       </BoxWrapper>
-      <HasWonModal
+      <ResultsModal
         onClose={resetBoard}
-        open={Boolean(showVictoryScreen)}
-        victor={currentPlayer}
+        open={Boolean(showResultsScreen)}
+        victor={victor}
       />
     </>
   );
