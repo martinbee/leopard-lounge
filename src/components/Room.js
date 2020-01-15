@@ -13,7 +13,6 @@ const GameInfoWrapper = styled.div`
 const GameInfo = styled.div`
   display: flex;
 `;
-
 const Text = styled(Typography)`
   text-align: center;
 `;

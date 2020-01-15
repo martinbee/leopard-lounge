@@ -16,7 +16,6 @@ const gameHeight = '42';
 const Text = styled(Typography)`
   text-align: center;
 `;
-
 const BoxWrapper = styled.div`
   height: ${gameHeight}vh;
   display: flex;
@@ -24,25 +23,21 @@ const BoxWrapper = styled.div`
   margin-top: 2rem;
   margin-bottom: 3rem;
 `;
-
 const Row = styled.div`
   height: ${({ rowHeight }) => rowHeight};
-  border-top: ${({ isFirstRow }) => isFirstRow ? 'none' : '.5px solid black'};
-  border-bottom: ${({ isLastRow }) => isLastRow ? 'none' : '.5px solid black'};
+  border-top: ${({ isFirstRow }) => isFirstRow ? 'none' : '.25px solid black'};
+  border-bottom: ${({ isLastRow }) => isLastRow ? 'none' : '.25px solid black'};
   display: flex;
 `;
-
 const ButtonWrapper = styled.div`
   display: flex;
   justify-content: center;
 `;
-
 const SelectWrapper = styled.div`
   display: flex;
   justify-content: center;
   margin-top: 2rem;
 `;
-
 const SelectFormControl = styled(FormControl)`
   width: 8rem;
 `;
@@ -83,7 +78,7 @@ const getBlankBoard = (numberOfRows = 1) => new Array(numberOfRows)
   .fill(new Array(numberOfRows).fill(''));
 
 const TicTacToe = () => {
-  const [numberOfRows, setNumberOfRows] = useState(6);
+  const [numberOfRows, setNumberOfRows] = useState(3);
   const initialBoardState = getBlankBoard(numberOfRows);
   const [boardState, setBoardState] = useState(initialBoardState);
   const [currentPlayer, setCurrentPlayer] = useState(initialPlayerState);
@@ -96,7 +91,22 @@ const TicTacToe = () => {
     }
   };
 
-  const claimBox = (rowIndex, boxIndex) => console.log(rowIndex, boxIndex);
+  const claimBox = (rowIndexToClaim, boxIndexToClaim) => {
+    const updatedBoard = boardState.map((row, rowIndex) => {
+      if (rowIndex === rowIndexToClaim) {
+        return row.map((box, boxIndex) => {
+          if (boxIndex === boxIndexToClaim) return currentPlayer;
+
+          return box;
+        });
+      }
+
+      return row;
+    });
+
+    setBoardState(updatedBoard);
+    toggleCurrentPlayer();
+  };
 
   const resetBoard = () => {
     setBoardState(getBlankBoard(numberOfRows));
@@ -136,7 +146,7 @@ const TicTacToe = () => {
                 return (
                   <Box
                     key={key}
-                    claimBox={claim}
+                    claim={claim}
                     player={player}
                     isFirstBox={isFirstBox}
                     isLastBox={isLastBox}
