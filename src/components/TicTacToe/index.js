@@ -112,7 +112,14 @@ const TicTacToe = () => {
     setBoardState(getBlankBoard(numberOfRows));
     setCurrentPlayer(initialPlayerState);
   };
-  const resetDisabled = false;
+
+  // do better here
+  const boardHasAMove = boardState.reduce((hasMove, rows) => {
+    if (!hasMove) return rows.find(move => move);
+
+    return hasMove;
+  }, false);
+
   const selectNumberOfRows = (evt) => {
     const number = evt.target.value;
     setNumberOfRows(number);
@@ -130,7 +137,7 @@ const TicTacToe = () => {
             onClick={resetBoard}
             color="secondary"
             variant="contained"
-            disabled={resetDisabled}
+            disabled={!boardHasAMove}
           >
             Reset
           </Button>
