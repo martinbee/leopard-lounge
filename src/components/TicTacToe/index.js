@@ -13,6 +13,15 @@ import Box from './Box';
 
 const gameHeight = '42';
 
+const GameHeader = styled.div`
+  display: flex;
+`;
+const GameHeaderSection = styled.div`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+`;
 const Text = styled(Typography)`
   text-align: center;
 `;
@@ -28,15 +37,6 @@ const Row = styled.div`
   border-top: ${({ isFirstRow }) => isFirstRow ? 'none' : '.25px solid black'};
   border-bottom: ${({ isLastRow }) => isLastRow ? 'none' : '.25px solid black'};
   display: flex;
-`;
-const ButtonWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-`;
-const SelectWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  margin-top: 2rem;
 `;
 const SelectFormControl = styled(FormControl)`
   width: 8rem;
@@ -121,9 +121,40 @@ const TicTacToe = () => {
 
   return (
     <>
-      <div>
-        <Text>Turn: Player {currentPlayer}</Text>
-      </div>
+      <GameHeader>
+        <GameHeaderSection>
+          <Text>Turn: Player {currentPlayer}</Text>
+        </GameHeaderSection>
+        <GameHeaderSection>
+          <Button
+            onClick={resetBoard}
+            color="secondary"
+            variant="contained"
+            disabled={resetDisabled}
+          >
+            Reset
+          </Button>
+        </GameHeaderSection>
+        <GameHeaderSection>
+          <SelectFormControl>
+            <InputLabel id="number-of-rows-select-label">
+              Number of Rows
+            </InputLabel>
+            <Select
+              labelId="number-of-rows-select-label"
+              id="number-of-rows-select"
+              value={numberOfRows}
+              onChange={selectNumberOfRows}
+            >
+              {numberOfRowsOptions.map((number) => (
+                <MenuItem key={number} value={number}>
+                  {number}
+                </MenuItem>
+              ))}
+            </Select>
+          </SelectFormControl>
+        </GameHeaderSection>
+      </GameHeader>
       <BoxWrapper>
         {boardState.map((row, rowIndex) => {
           const rowHeight = `${gameHeight / numberOfRows}vh`;
@@ -157,35 +188,6 @@ const TicTacToe = () => {
           );
         })}
       </BoxWrapper>
-      <ButtonWrapper>
-        <Button
-          onClick={resetBoard}
-          color="secondary"
-          variant="contained"
-          disabled={resetDisabled}
-        >
-          Reset
-        </Button>
-      </ButtonWrapper>
-      <SelectWrapper>
-        <SelectFormControl>
-          <InputLabel id="number-of-rows-select-label">
-            Number of Rows
-          </InputLabel>
-          <Select
-            labelId="number-of-rows-select-label"
-            id="number-of-rows-select"
-            value={numberOfRows}
-            onChange={selectNumberOfRows}
-          >
-            {numberOfRowsOptions.map((number) => (
-              <MenuItem key={number} value={number}>
-                {number}
-              </MenuItem>
-            ))}
-          </Select>
-        </SelectFormControl>
-      </SelectWrapper>
     </>
   );
 };
