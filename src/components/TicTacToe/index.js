@@ -8,6 +8,7 @@ import {
   MenuItem,
 } from '@material-ui/core';
 import styled from 'styled-components';
+import flatten from 'lodash.flatten';
 
 import Box from './Box';
 import ResultsModal from './ResultsModal';
@@ -71,10 +72,11 @@ const checkBoardForVictory = (rowIndex, boxIndex, boardState, player) => {
 };
 
 const numberOfRowsOptions = [3, 4, 5, 6];
-const initialPlayerState = '1';
 
 const getBlankBoard = (numberOfRows = 1) => new Array(numberOfRows)
   .fill(new Array(numberOfRows).fill(''));
+
+const initialPlayerState = '1';
 
 const TicTacToe = () => {
   const [numberOfRows, setNumberOfRows] = useState(3);
@@ -118,13 +120,10 @@ const TicTacToe = () => {
       setVictor(currentPlayer); // this does not disappear
       setShowResultsScreen(true);
     } else {
-      // feels clunky, maybe count moves?? logic doesn't work
-      const isCatsGame = updatedBoard.reduce((acc, row) => {
-        if (Boolean(acc)) return acc;
-        const emptyValues = row.filter(value => !Boolean(value));
-
-        return !emptyValues.length;
-      }, false);
+      // better but maybe count moves instead?
+      const numberOfFilledBoxes = flatten(updatedBoard).filter(value => Boolean(value)).length;
+      const totalNumberOfBoxes = numberOfRows * numberOfRows;
+      const isCatsGame = numberOfFilledBoxes === totalNumberOfBoxes;
 
       if (isCatsGame) {
         setShowResultsScreen(true);
